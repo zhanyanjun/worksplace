@@ -1,0 +1,16 @@
+.right {
+    float: right;
+}
+
+.list-group-item {
+    margin-top: 10px;
+    min-height: 40px;
+}
+.list-group-item a {
+    margin-left: 10px;
+}
+
+.item-edit {
+    outline: none;
+    border-width: 0 0 1px 0;
+}
