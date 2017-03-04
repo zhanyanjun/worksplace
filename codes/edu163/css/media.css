@@ -1,0 +1,24 @@
+/*
+* @Author: zxchc
+* @Date:   2017-03-04 21:42:19
+* @Last Modified by:   zxchc
+* @Last Modified time: 2017-03-04 21:42:59
+*/
+
+@media screen and (max-width: 1205px){
+    .g-content,.g-header .m-header,.g-header .m-products,.g-flow{
+        width: 960px;
+    }
+    .g-header .u-product{
+        width: 171px;
+    }
+    .g-header .product1,.g-header .product2{
+        margin-right: 73px;
+    }
+    .g-footer .m-foot .u-into{
+        padding-left: 0;
+    }
+    .g-header,.g-pactures,.g-footer{
+        min-width: 960px;
+    }
+}

@@ -1,0 +1,73 @@
+/*
+* @Author: zxchc
+* @Date:   2017-03-04 18:06:17
+* @Last Modified by:   zxchc
+* @Last Modified time: 2017-03-04 19:04:31
+*/
+.g-flow {
+    width: 1205px;
+    margin: 0 auto;
+}
+.g-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3339;
+}
+
+.m-foot {
+    height: 262px;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
+    *color: #fff;/*    IE7 hack*/
+}
+
+.m-foot .u-into {
+    float: left;
+    padding: 92px 150px 0 52px;
+    width: 393px;
+}
+
+.u-into .logo {
+    width: 234px;
+    height: 22px;
+    background: url(../images/logo2.png) no-repeat;
+}
+
+.u-into .txt {
+    padding-top: 28px;
+    line-height: 25px;
+    font-size: 12.5px;
+}
+
+.u-links {
+    float: left;
+    padding-top: 82px;
+    line-height: 29.167px;
+    font-size: 14.58px;
+}
+
+.u-links .link {
+    display: block;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.6);
+    *color: #fff;/*    IE7 hack*/
+}
+
+.u-links .tit {
+    font-size: 12.5px;
+}
+
+.f-lk1 {
+    padding-right: 98px;
+    width: 111px;
+}
+
+.f-lk2 {
+    padding-right: 72px;
+    width: 62px;
+}
+.u-links .weibo{
+    background: url(../images/weibo.png) no-repeat 42px;
+}

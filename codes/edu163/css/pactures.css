@@ -1,0 +1,22 @@
+/*
+* @Author: zxchc
+* @Date:   2017-03-04 18:04:11
+* @Last Modified by:   zxchc
+* @Last Modified time: 2017-03-04 20:00:35
+*/
+
+.m-pactures {
+    position: relative;
+    top: 0;
+    left: 50%;
+    width: 1632px;
+    height: 220px;
+    margin-left: -808px;
+    margin-bottom: 81px;
+}
+
+.g-pactures {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}

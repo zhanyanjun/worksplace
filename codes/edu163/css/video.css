@@ -1,0 +1,35 @@
+/*
+* @Author: zxchc
+* @Date:   2017-03-04 18:12:27
+* @Last Modified by:   zxchc
+* @Last Modified time: 2017-03-04 21:42:56
+*/
+
+.m-video {
+    position: relative;
+    margin: 0 auto;
+    width: 890px;
+    height: 616px;
+    padding: 30px;
+    background-color: #fff;
+}
+
+.m-video .tt{
+    font-size: 18px;
+    color: #444444;
+}
+.m-video video{
+    margin-top: 22px;
+}
+
+.m-video .closed {
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    width: 23px;
+    height: 22px;
+    text-indent: -9999px;
+    background: url(../images/closed.png);
+    cursor: pointer;
+}
+

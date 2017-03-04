@@ -1,0 +1,39 @@
+/*
+* @Author: zxchc
+* @Date:   2017-03-04 17:52:14
+* @Last Modified by:   zxchc
+* @Last Modified time: 2017-03-04 21:37:59
+*/
+
+.m-tips {
+    height: 36px;
+    background-color: #f3f3f3;
+    font-size: 12px;
+    transition: margin-top 0.3s;
+}
+
+.g-content {
+    position: relative;
+    width: 1202px;
+    height: 36px;
+    margin: 0 auto;
+}
+
+.m-tips .text {
+    display: inline;
+    line-height: 36px;
+}
+
+.m-tips .more {
+    color: #21a557;
+}
+
+.u-notips {
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 36px;
+    padding-left: 15px;
+    background: url(../images/close.png) no-repeat 0 center;
+    cursor: pointer;
+}
