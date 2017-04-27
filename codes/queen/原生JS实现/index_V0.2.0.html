@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>第二个版本</title>
+</head>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    min-width: 768px;
+  }
+  
+  li {
+    list-style: none;
+  }
+  
+  #board {
+    height: auto;
+    margin: 50px auto;
+    overflow: hidden;
+    border: 1px #fff solid;
+    background-color: #fff;
+  }
+  
+  #board li {
+    color: #ddd;
+    background-color: #444;
+    border: 1px #fff solid;
+    float: left;
+  }
+  
+  .about {
+    width: 100%;
+  }
+  
+  .about p,
+  .setup {
+    width: 50%;
+    margin: 20px auto;
+    max-width: 768px;
+  }
+  
+  .setup {
+    text-align: center;
+  }
+  
+  .setup input~div,
+  .setup input {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    height: 35px;
+    line-height: 35px;
+    width: 20%;
+    padding: 0;
+    box-shadow: none;
+    outline: none;
+    border-bottom: 1px solid #444;
+  }
+  
+  .setup input~div {
+    background-color: #444;
+    color: #ddd;
+    display: inline-block;
+  }
+</style>
+
+<body>
+  <ul id="board">
+  </ul>
+  <div class="setup">
+    <input id="rows" type="text" placeholder="行数:8" value="">
+    <input id="cols" type="text" placeholder="列数:8" value="">
+    <div id="start">开始/重来</div>
+    <div id="tips">提示一下</div>
+  </div>
+  <div class="about">
+    <p>游戏描述:在国际象棋中,皇后的攻击力是最强的,它可以横着走,竖着走,还可以沿着对角线斜着走,假设你可以有无数个旗子,而且每个旗子都是皇后. </p>
+    <p>规则1:你可以在棋盘上任意一个空闲的位置落子; </p>
+    <p>规则2:如果落子是安全的则游戏继续,如果落子是不安全的(能被其他皇后攻击到)则游戏结束,判用户输; </p>
+    <p>规则3:当用户没有位置可以落子时(棋盘上所有的位置都不安全了),游戏结束,判用户赢.</p>
+  </div>
+
+</body>
+
+<script>
+  var EventUtil = {
+    addHandler: function(element, type, handler, useCapture) {
+      if (element.addEventListener) {
+        element.addEventListener(type, handler, useCapture ? true : false);
+      } else if (element.attachEvent) {
+        element.attachEvent('on' + type, handler);
+      } else if (element != window) {
+        element['on' + type] = handler;
+      }
+    },
+    removeHandler: function(element, type, handler, useCapture) {
+      if (element.removeEventListener) {
+        element.removeEventListener(type, handler, useCapture ? true : false);
+      } else if (element.detachEvent) {
+        element.detachEvent('on' + type, handler);
+      } else if (element != window) {
+        element['on' + type] = null;
+      }
+    },
+    getEvent: function(event) {
+      return event || window.event;
+    },
+    getTarget: function(evetn) {
+      return event.target || event.srcElement;
+    },
+    preventDefault: function(event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      } else {
+        event.returnValue = false;
+      }
+    },
+    stopPropagation: function(event) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      } else {
+        event.cancelBubble = true;
+      }
+    }
+  };
+
+  var rows = document.getElementById('rows');
+  var cols = document.getElementById('cols');
+  var start = document.getElementById('start');
+  var tips = document.getElementById('tips');
+  var setup = document.getElementsByClassName('setup');
+
+  var board = document.getElementById('board');
+  // var grid = board.getElementsByTagName('li');
+  var sizeGrid = 50; //每个格子的大小
+  var rowNum = 8; //棋盘有多少行,可以提取出来让用户输入
+  var colNum = 8; //棋盘有多少列,可以提取出来让用户输入
+
+  init();
+
+  function init() {
+    // 1、创建棋盘
+    createGrid(rowNum, colNum);
+
+    // 2、为落子增减事件监听
+    // for (var i = 0; i < grid.length; i++) {
+    //   EventUtil.addHandler(grid[i], 'click', handlerQueen);
+    // }
+    EventUtil.addHandler(board, 'click', handlerQueen); //让ul代理li事件
+
+    //3、棋盘初始化设置,游戏提示事件监听
+    EventUtil.addHandler(start, 'click', handlerStart);
+    EventUtil.addHandler(tips, 'click', handlerTips);
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * 函数功能：创建一个棋盘,给棋盘建立二维坐标,并初始化每个格子的坐标
+   * @param  {[Number]} row,col [棋盘的行数,列数]
+   * @return {[undefied]}
+   */
+  function createGrid(row, col) {
+
+    var _board = document.getElementById('board');
+
+    var _length = row * col; //总格有多少个格子
+
+    _board.style.width = col * (sizeGrid + 2) + 'px'; //设置棋盘宽度
+
+    for (var i = 0; i < _length; i++) {
+      var _grid = document.createElement('li');
+      _grid.style.width = sizeGrid + 'px';
+      _grid.style.height = sizeGrid + 'px';
+      _grid.index = -1; //给格子设置默认值-1,后期根据值的不同判断该格子是否可点击
+      // _grid.innerHTML = _grid.index;
+      _board.appendChild(_grid);
+    }
+
+    // 给棋盘创建二维坐标系, 初始化每个格子的坐标
+    var _newGrid = _board.getElementsByTagName('li');
+    for (var i = 0; i < row; i++) {
+      for (var j = 0; j < col; j++) {
+        _newGrid[i * col + j].x = j;
+        _newGrid[i * col + j].y = i;
+        // _newGrid[i * col + j].innerHTML = j + ' ' + i;
+      }
+    }
+
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * 函数功能：落子回调函数,如果落子位置不安全游戏结束,判用户败,如果落子位置安全游戏继续,如果棋盘上已经没有安全的位置了,则游戏结束,判用户胜
+   */
+  function handlerQueen(event) {
+    event = EventUtil.getEvent(event);
+    var _board = document.getElementById('board');
+    var _grid = _board.getElementsByTagName('li');
+
+    _index = event.target.index;
+    _x = event.target.x;
+    _y = event.target.y;
+
+    //拿到这个grid的坐标,传给判断是否安全的函数
+    if (queenSafe(_x, _y, _index)) {
+      //落子安全
+      event.target.style.backgroundColor = '#ccc';
+      event.target.style.color = '#444';
+      event.target.innerHTML = '1';
+      var _count = 0; //落子安全的位置个数
+      //每次都要循环判断,这里可否优化
+      for (var i = 0; i < _grid.length; i++) {
+        if ((_grid[i].index === -1)) {
+          _count++;
+        }
+      }
+      if (_count === 0) {
+        //棋盘上已经没有安全的位置了
+        console.log('你赢了');
+        alert('你赢了！！');
+        window.location.reload();
+      }
+    } else {
+      //落子不安全
+      console.log('你输了');
+      alert('你输了!!');
+      window.location.reload();
+    }
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * @函数功能：判断落子是否安全,如果安全,把落子攻击范围内的位置的值标为1
+   * @param  {[Number]} x,y,index [落子位置的坐标值(x,y)和当前值index]
+   * @return {[Boolean]}[落子的位置是否安全]
+   */
+  function queenSafe(x, y, index) {
+    var _board = document.getElementById('board');
+    var _grid = _board.getElementsByTagName('li');
+    if (index === -1) {
+
+      for (var i = 0; i < _grid.length; i++) {
+        if (_grid[i].x === x || _grid[i].y === y || (_grid[i].x + _grid[i].y) === (x + y) || (_grid[i].x - _grid[i].y) === (x - y)) {
+          _grid[i].index = 1;
+          // _grid[i].style.backgroundColor = '#ccc';
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * @函数功能：开始/重来按钮事件监听函数,根据行列数生成棋盘
+   * @param
+   * @return
+   */
+  function handlerStart(event) {
+    event = EventUtil.getEvent(event);
+    // console.log(event.target);
+
+    _rowNum = Number(rows.value) === 0 ? 8 : rows.value;
+    _colNum = Number(cols.value) === 0 ? 8 : cols.value;
+    removeGrid();
+    createGrid(_rowNum, _colNum);
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * @函数功能：提示一下按钮事件监听函数,把当前位置不安全的位置标识出来,可以根据需求改变
+   * @param
+   * @return
+   */
+  function handlerTips(event) {
+    event = EventUtil.getEvent(event);
+    console.log(event.target);
+
+    var _board = document.getElementById('board');
+    var _grid = _board.getElementsByTagName('li');
+    for (var i = 0; i < _grid.length; i++) {
+      if (_grid[i].index !== -1) {
+        _grid[i].style.backgroundColor = '#ccc';
+      }
+    }
+
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * @函数功能：重新画一个棋盘并未格子添加事件监听函数
+   * @param
+   * @return
+   */
+  function removeGrid() {
+    var _board = document.getElementById('board');
+    // <ul id="board"></ul>
+    var _newboard = document.createElement('ul');
+    _newboard.id = 'board';
+    _newboard.style.height = 'auto';
+    _newboard.style.margin = '50px auto';
+    _newboard.style.overflow = 'hidden';
+    _newboard.style.border = '1px #fff solid';
+    _newboard.style.backgroundColor = '#fff';
+
+    // console.log(board);
+    if (_board) {
+      _board.parentNode.replaceChild(_newboard, _board);
+      EventUtil.addHandler(_newboard, 'click', handlerQueen); //让ul代理li事件
+    }
+
+  };
+</script>
+
+</html>

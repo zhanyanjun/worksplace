@@ -1,0 +1,22 @@
+<table>
+  <tr *ngFor="let row of grids">
+    <td *ngFor="let col of row" (click)="handlerQueen($event)" [class.unsafe]="col === -1 ? false:true" [class.no-tips]="!tips" [class.queen]="(col === -3 || col ===8) ? true:false">
+    </td>
+  </tr>
+</table>
+
+<div class="setup">
+  <input id="rows" type="text" placeholder="行数:8" value="" [(ngModel)]="colNum">
+  <input id="cols" type="text" placeholder="列数:8" value="" [(ngModel)]="rowNum">
+  <div id="start" (click)="handlerStart($event)">开始/重来</div>
+  <div id="tips" (click)="handlerTips($event)" [class.no-tips]="tips">提示</div>
+  <div id="queen" (click)="handlerQueenPos($event)">找到8皇后</div>
+</div>
+
+<div class="about">
+  <p>{{desc}}</p>
+  <p>{{rule1}}</p>
+  <p>{{rule2}}</p>
+  <p>{{rule3}}</p>
+  <p>{{rule4}}</p>
+</div>

@@ -1,0 +1,81 @@
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    min-width: 768px;
+  }
+  
+  .about {
+    width: 100%;
+  }
+  
+  .about p,
+  .setup {
+    width: 768px;
+    margin: 20px auto;
+  }
+  
+  .setup {
+    text-align: center;
+  }
+  
+  .setup input~div,
+  .setup input {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    height: 35px;
+    line-height: 35px;
+    width: 10%;
+    padding: 0;
+    box-shadow: none;
+    outline: none;
+    border-bottom: 1px solid #444;
+  }
+  
+  .setup input~div {
+    background-color: #444;
+    color: #ddd;
+    display: inline-block;
+  }
+  
+  .setup .no-tips {
+    color: #444 !important;
+    background-color: #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+  }
+  
+  table {
+    height: auto;
+    margin: 50px auto;
+    overflow: hidden;
+    border: 1px #fff solid;
+    background-color: #fff;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  
+  table td {
+    color: #ddd;
+    background-color: #444;
+    border: 1px #fff solid;
+    height: 50px;
+    width: 50px;
+  }
+  
+  table .unsafe {
+    color: #444;
+    background-color: #ddd;
+  }
+  
+  table .no-tips {
+    color: #ddd;
+    background-color: #444;
+  }
+  
+  table .queen {
+    color: #444;
+    background-color: #ddd;
+  }

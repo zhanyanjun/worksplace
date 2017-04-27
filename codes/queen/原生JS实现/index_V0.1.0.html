@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>第一个版本</title>
+</head>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    list-style: none;
+  }
+  
+  #board {
+    height: auto;
+    margin: 50px auto;
+    overflow: hidden;
+    border: 1px #fff solid;
+    background-color: #fff;
+  }
+  
+  #board li {
+    color: #ddd;
+    background-color: #444;
+    border: 1px #fff solid;
+    float: left;
+  }
+</style>
+
+<body>
+  <ul id="board">
+  </ul>
+</body>
+
+<script>
+  var EventUtil = {
+    addHandler: function(element, type, handler, useCapture) {
+      if (element.addEventListener) {
+        element.addEventListener(type, handler, useCapture ? true : false);
+      } else if (element.attachEvent) {
+        element.attachEvent('on' + type, handler);
+      } else if (element != window) {
+        element['on' + type] = handler;
+      }
+    },
+    removeHandler: function(element, type, handler, useCapture) {
+      if (element.removeEventListener) {
+        element.removeEventListener(type, handler, useCapture ? true : false);
+      } else if (element.detachEvent) {
+        element.detachEvent('on' + type, handler);
+      } else if (element != window) {
+        element['on' + type] = null;
+      }
+    },
+    getEvent: function(event) {
+      return event || window.event;
+    },
+    getTarget: function(evetn) {
+      return event.target || event.srcElement;
+    },
+    preventDefault: function(event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      } else {
+        event.returnValue = false;
+      }
+    },
+    stopPropagation: function(event) {
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      } else {
+        event.cancelBubble = true;
+      }
+    }
+  };
+  var board = document.getElementById('board');
+  var grid = board.getElementsByTagName('li');
+  var sizeGrid = 50; //每个格子的大小
+  var rowNum = 8; //棋盘有多少行,可以提取出来让用户输入
+  var colNum = 8; //棋盘有多少列,可以提取出来让用户输入
+
+  init();
+
+  function init() {
+    // 1、创建棋盘
+    createGrid(rowNum, colNum);
+
+    // 2、为落子增减事件监听
+    // for (var i = 0; i < grid.length; i++) {
+    //   EventUtil.addHandler(grid[i], 'click', handlerQueen);
+    // }
+    EventUtil.addHandler(board, 'click', handlerQueen); //让ul代理li事件
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * 函数功能：创建一个棋盘,给棋盘建立二维坐标,并初始化每个格子的坐标
+   * @param  {[Number]} row,col [棋盘的行数,列数]
+   * @return {[undefied]}
+   */
+  function createGrid(row, col) {
+
+    var _length = row * col; //总格有多少个格子
+
+    board.style.width = col * (sizeGrid + 2) + 'px'; //设置棋盘宽度
+
+    for (var i = 0; i < _length; i++) {
+      var _grid = document.createElement('li');
+      _grid.style.width = sizeGrid + 'px';
+      _grid.style.height = sizeGrid + 'px';
+      _grid.index = -1; //给格子设置默认值-1,后期根据值的不同判断该格子是否可点击
+      //   _grid.innerHTML = _grid.index;
+      board.appendChild(_grid);
+    }
+
+    //给棋盘创建二维坐标系,初始化每个格子的坐标
+    for (var i = 0; i < row; i++) {
+      for (var j = 0; j < col; j++) {
+        grid[i * col + j].x = j;
+        grid[i * col + j].y = i;
+        // grid[i * col + j].innerHTML = j + ' ' + i;
+      }
+    }
+
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * 函数功能：落子回调函数,如果落子位置不安全游戏结束,判用户败,如果落子位置安全游戏继续,如果棋盘上已经没有安全的位置了,则游戏结束,判用户胜
+   */
+  function handlerQueen(event) {
+    event = EventUtil.getEvent(event);
+
+    _index = event.target.index;
+    _x = event.target.x;
+    _y = event.target.y;
+    //拿到这个grid的坐标,传给判断是否安全的函数
+    if (queenSafe(_x, _y, _index)) {
+      //落子安全
+      //   event.target.style.backgroundColor = '#ccc';
+
+      var _count = 0; //落子安全的位置个数
+      //每次都要循环判断,这里可否优化
+      for (var i = 0; i < grid.length; i++) {
+        if ((grid[i].index === -1)) {
+          _count++;
+        }
+      }
+      if (_count === 0) {
+        //棋盘上已经没有安全的位置了
+        console.log('你赢了');
+        alert('你赢了！！');
+        window.location.reload();
+      }
+    } else {
+      //落子不安全
+      console.log('你输了');
+      alert('你输了!!');
+      window.location.reload();
+    }
+  }
+
+  /*
+   * @Author: ArcherZheng
+   * @time: 20170425
+   * @modify: 20170425
+   * @函数功能：判断落子是否安全,如果安全,把落子攻击范围内的位置的值标为1
+   * @param  {[Number]} x,y,index [落子位置的坐标值(x,y)和当前值index]
+   * @return {[Boolean]}[落子的位置是否安全]
+   */
+  function queenSafe(x, y, index) {
+
+    if (index === -1) {
+
+      for (var i = 0; i < grid.length; i++) {
+        if (grid[i].x === x || grid[i].y === y || (grid[i].x + grid[i].y) === (x + y) || (grid[i].x - grid[i].y) === (x - y)) {
+          grid[i].index = 1;
+          grid[i].style.backgroundColor = '#ccc';
+
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+</script>
+
+</html>
